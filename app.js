@@ -13,7 +13,7 @@ mongoose.connect("mongodb+srv://sreelekshmisl1710:Dharithri@cluster0.y83cozw.mon
 
 app.post("/userreg",async(request,response)=>{
     let data=request.body
-    let bloguser=new userModel(data)
+    const bloguser=new userModel(data)
     let result=await bloguser.save()
     if (result.Name!="") {
         response.json({"status":"success"})
@@ -21,6 +21,8 @@ app.post("/userreg",async(request,response)=>{
         response.json({"status":"error"})
     }
 })
+
+
 
 
 
