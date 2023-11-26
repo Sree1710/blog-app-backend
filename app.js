@@ -3,6 +3,7 @@ const bodyParser=require('body-parser')
 const Cors=require('cors')
 const mongoose=require('mongoose')
 const userModel = require('./userModel')
+const postModel = require('./postModel')
 
 const app=Express()
 app.use(bodyParser.json())
@@ -38,7 +39,16 @@ app.post("/login",async(request,response)=>{
     }
 })
 
-
+app.post("/addp",async(request,response)=>{
+    let data=request.body
+    const post=new postModel(data)
+    let result=await post.save()
+    if (result.postTitle!="") {
+        response.json({"status":"success"})
+    } else {
+        response.json({"status":"error"})
+    }
+})
 
 
 
