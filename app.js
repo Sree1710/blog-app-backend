@@ -22,6 +22,28 @@ app.post("/userreg",async(request,response)=>{
     }
 })
 
+app.post("/login",async(request,response)=>{
+    let data=request.body
+    let getUsername=data.username
+    let getPassword=data.password
+    let result=await userModel.find({username:getUsername})
+    if (result.length>0) {
+        if (result[0].password==getPassword) {
+            response.json({"status":"success","data":result[0]})
+        } else {
+            response.json({"status":"Invalid Username or Password !!!"})
+        }
+    } else {
+        response.json({"status":"User does not exist !!!"})
+    }
+})
+
+
+
+
+
+
+
 
 
 
