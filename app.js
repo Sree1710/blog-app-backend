@@ -23,6 +23,8 @@ app.post("/userreg",async(request,response)=>{
     }
 })
 
+
+
 app.post("/login",async(request,response)=>{
     let data=request.body
     let getUsername=data.username
@@ -39,6 +41,8 @@ app.post("/login",async(request,response)=>{
     }
 })
 
+
+
 app.post("/addp",async(request,response)=>{
     let data=request.body
     const post=new postModel(data)
@@ -50,12 +54,20 @@ app.post("/addp",async(request,response)=>{
     }
 })
 
+
+
 app.post("/viewmp",async(request,response)=>{
     let data=request.body
     let result=await postModel.find(data)
     response.json(result)
 })
 
+
+
+app.post("/viewap",async(request,response)=>{
+    let result=await postModel.find()
+    response.json(result)
+})
 
 
 
