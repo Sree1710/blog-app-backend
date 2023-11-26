@@ -4,6 +4,7 @@ const Cors=require('cors')
 const mongoose=require('mongoose')
 const userModel = require('./userModel')
 const postModel = require('./postModel')
+const jwt=require('jsonwebtoken')
 
 const app=Express()
 app.use(bodyParser.json())
@@ -32,7 +33,15 @@ app.post("/login",async(request,response)=>{
     let result=await userModel.find({username:getUsername})
     if (result.length>0) {
         if (result[0].password==getPassword) {
-            response.json({"status":"success","data":result[0]})
+            jwt.sign({username:getUsername,password:getPassword},"blogapp",{expiresIn:"1d"},
+            (error,token)=>{
+                if (error) {
+                    response.json({"status":"Unauthorized User !!!"})
+                } else {
+                    response.json({"status":"success","data":result[0],"token":token})
+                }
+
+            })
         } else {
             response.json({"status":"Invalid Username or Password !!!"})
         }
@@ -45,10 +54,17 @@ app.post("/login",async(request,response)=>{
 
 app.post("/addp",async(request,response)=>{
     let data=request.body
+    let token=request.body.token
     const post=new postModel(data)
     let result=await post.save()
     if (result.postTitle!="") {
-        response.json({"status":"success"})
+        jwt.verify(token,"blogapp",(error,decoded)=>{
+            if (error) {
+                response.json({"status":"Unauthorized User !!!"})
+            } else {
+                response.json({"status":"success"})
+            }
+        })
     } else {
         response.json({"status":"error"})
     }
@@ -58,15 +74,29 @@ app.post("/addp",async(request,response)=>{
 
 app.post("/viewmp",async(request,response)=>{
     let data=request.body
-    let result=await postModel.find(data)
-    response.json(result)
+    let token=request.body.token
+    let result=await postModel.find({"_id":data})
+    jwt.verify(token,"blogapp",(error,decoded)=>{
+        if (decoded) {
+            response.json(result)
+        } else {
+            response.json({"status":"Unauthorized User !!!"})
+        }
+    })
 })
 
 
 
 app.post("/viewap",async(request,response)=>{
+    let token=request.body.token
     let result=await postModel.find()
-    response.json(result)
+    jwt.verify(token,"blogapp",(error,decoded)=>{
+        if (error) {
+            response.json({"status":"Unauthorized User !!!"})
+        } else {
+            response.json(result)
+        }
+    })
 })
 
 
