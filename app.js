@@ -75,7 +75,7 @@ app.post("/addp",async(request,response)=>{
 app.post("/viewmp",async(request,response)=>{
     let data=request.body
     let token=request.body.token
-    let result=await postModel.find({"_id":data})
+    let result=await postModel.find({"post_id":data})
     jwt.verify(token,"blogapp",(error,decoded)=>{
         if (decoded) {
             response.json(result)
